@@ -237,7 +237,7 @@
 #endif
 
 #ifndef LOITER_RADIUS_DEFAULT
- # define LOITER_RADIUS_DEFAULT 60
+ # define LOITER_RADIUS_DEFAULT 1     // add by Xinglong Ju 20210509
 #endif
 
 #ifndef ALT_HOLD_HOME
