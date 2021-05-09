@@ -77,6 +77,10 @@ public:
     // nav_roll_cd()) after this function to ask for the new required
     // navigation attitude/steering.
     virtual void update_loiter(const struct Location &center_WP, float radius, int8_t loiter_direction) = 0;
+    
+    // add by Xinglong Ju 20210509
+    // direct lateral Accelaration control
+    virtual void update_latAcc(const struct Location &center_WP) = 0;
 
     // update the internal state of the navigation controller, given a
     // fixed heading. This is the step function for navigation control

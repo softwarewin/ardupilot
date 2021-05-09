@@ -445,6 +445,13 @@ void AP_L1_Control::update_loiter(const struct Location &center_WP, float radius
     _data_is_stale = false; // status are correctly updated with current waypoint data
 }
 
+// add by Xinglong Ju 20210509
+// direct lateral Accelaration control
+void AP_L1_Control::update_latAcc(const struct Location &center_WP)
+{
+    _latAccDem = center_WP.LateralAcc_cmd;
+    _latAccDem = constrain_float(_latAccDem, -10, 10); //Limit _latAccDem to +- 1g
+}
 
 // update L1 control for heading hold navigation
 void AP_L1_Control::update_heading_hold(int32_t navigation_heading_cd)
