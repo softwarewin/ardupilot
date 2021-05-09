@@ -319,7 +319,7 @@ void Plane::update_loiter(uint16_t radius)
         }
     }
     else{
-        nav_controller->(next_WP_loc, radius, loiter.direction);
+        nav_controller->update_latAcc(next_WP_loc);
     }
 }
 
