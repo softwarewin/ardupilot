@@ -176,7 +176,7 @@ void SITL_State::_parse_command_line(int argc, char * const argv[])
     _fg_address = "127.0.0.1";
     const char* config = "";
 
-    const int BASE_PORT = 5760;
+    const int BASE_PORT = 8030; // // modified by Xinglong Ju 20210509, origin 5760
     const int RCIN_PORT = 5501;
     const int FG_VIEW_PORT = 5503;
     _base_port = BASE_PORT;
