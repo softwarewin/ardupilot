@@ -21,6 +21,11 @@ public:
     int32_t lat;
     int32_t lng;
 
+    // add by Xinglong Ju 20210509
+    // auxiliary guide command information 
+    float LateralAcc_cmd;
+    float Pitch_cmd;
+
     /// enumeration of possible altitude types
     enum class AltFrame {
         ABSOLUTE = 0,
