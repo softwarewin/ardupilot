@@ -371,6 +371,10 @@ private:
     // Update Demanded Pitch Angle
     void _update_pitch(void);
 
+    // add by Xinglong Ju 20210510
+    // Update Demanded Pitch Angle directly
+    void _update_pitch_direct(float angle_rad);
+
     // Initialise states and variables
     void _initialise_states(int32_t ptchMinCO_cd, float hgt_afe);
 
