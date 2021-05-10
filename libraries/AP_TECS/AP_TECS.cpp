@@ -945,6 +945,12 @@ void AP_TECS::_update_pitch(void)
     _last_pitch_dem = _pitch_dem;
 }
 
+// add by Xinglong Ju 20210510
+void AP_TECS::_update_pitch_direct(float angle_rad)
+{
+    _last_pitch_dem = constrain_float(angle_rad,_PITCHminf,_PITCHmaxf);
+}
+
 void AP_TECS::_initialise_states(int32_t ptchMinCO_cd, float hgt_afe)
 {
     // Initialise states and variables if DT > 1 second or in climbout
@@ -1164,8 +1170,13 @@ void AP_TECS::update_pitch_throttle(int32_t hgt_dem_cm,
         _flags.badDescent = false;        
     }
 
-    // Calculate pitch demand
-    _update_pitch();
+    if(hgt_dem_cm<-5000*100){
+        _update_pitch_direct(radians(hgt_dem_cm/100.0 + 10000));
+    }
+    else{
+        // Calculate pitch demand
+        _update_pitch();
+    }
 
     // log to AP_Logger
     // @LoggerMessage: TECS

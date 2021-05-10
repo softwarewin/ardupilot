@@ -510,6 +510,11 @@ void Plane::update_alt()
             target_alt = MAX(target_alt, prev_WP_loc.alt - home.alt) + (g2.rtl_climb_min+10)*100;
         }
 
+        // add by Xinglong Ju 20210510
+        // if target alt is very low, control pitch angle directly
+        // the pitch angle is -10000 + pitchangle
+        if(next_WP_loc.alt<-5000*100)
+            target_alt = next_WP_loc.alt*100;
         SpdHgt_Controller->update_pitch_throttle(target_alt,
                                                  target_airspeed_cm,
                                                  flight_stage,
