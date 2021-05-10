@@ -46,8 +46,8 @@ private:
     void select_data(uint64_t usel_mask, uint64_t sel_mask);
 
     const char *xplane_ip = "127.0.0.1";
-    uint16_t xplane_port = 49000;
-    uint16_t bind_port = 49001;
+    uint16_t xplane_port = 58030; //modified by Xinglong Ju 20210510, Origin 49000
+    uint16_t bind_port = 58031;   //modified by Xinglong Ju 20210510, Origin 49001
     // udp socket, input and output
     SocketAPM socket_in{true};
     SocketAPM socket_out{true};
