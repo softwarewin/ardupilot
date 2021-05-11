@@ -948,7 +948,8 @@ void AP_TECS::_update_pitch(void)
 // add by Xinglong Ju 20210510
 void AP_TECS::_update_pitch_direct(float angle_rad)
 {
-    _last_pitch_dem = constrain_float(angle_rad,_PITCHminf,_PITCHmaxf);
+    _pitch_dem = constrain_float(angle_rad,_PITCHminf,_PITCHmaxf);
+    _last_pitch_dem = _pitch_dem;
 }
 
 void AP_TECS::_initialise_states(int32_t ptchMinCO_cd, float hgt_afe)
@@ -1170,8 +1171,8 @@ void AP_TECS::update_pitch_throttle(int32_t hgt_dem_cm,
         _flags.badDescent = false;        
     }
 
-    if(hgt_dem_cm<-5000*100){
-        _update_pitch_direct(radians(hgt_dem_cm/100.0 + 10000));
+    if(hgt_dem_cm<-5000){
+        _update_pitch_direct(radians((float)(hgt_dem_cm + 10000)));
     }
     else{
         // Calculate pitch demand
