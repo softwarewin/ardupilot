@@ -198,9 +198,10 @@ void Plane::calc_airspeed_errors()
     }
 
     // Bump up the target airspeed based on throttle nudging
-    if (throttle_allows_nudging && airspeed_nudge_cm > 0) {
+    // modified by Xinglong Ju 20210519
+    /*if (throttle_allows_nudging && airspeed_nudge_cm > 0) {
         target_airspeed_cm += airspeed_nudge_cm;
-    }
+    }*/
 
     // Apply airspeed limit
     if (target_airspeed_cm > (aparm.airspeed_max * 100))
@@ -231,56 +232,63 @@ void Plane::calc_gndspeed_undershoot()
 
 void Plane::update_loiter(uint16_t radius)
 {
-    if (radius <= 1) {
-        // if radius is <=1 then use the general loiter radius. if it's small, use default
-        radius = (abs(aparm.loiter_radius) <= 1) ? LOITER_RADIUS_DEFAULT : abs(aparm.loiter_radius);
-        if (next_WP_loc.loiter_ccw == 1) {
-            loiter.direction = -1;
-        } else {
-            loiter.direction = (aparm.loiter_radius < 0) ? -1 : 1;
-        }
-    }
-
-    if (loiter.start_time_ms != 0 &&
-        quadplane.guided_mode_enabled()) {
-        if (!auto_state.vtol_loiter) {
-            auto_state.vtol_loiter = true;
-            // reset loiter start time, so we don't consider the point
-            // reached till we get much closer
-            loiter.start_time_ms = 0;
-            quadplane.guided_start();
-        }
-    } else if ((loiter.start_time_ms == 0 &&
-                (control_mode == &mode_auto || control_mode == &mode_guided) &&
-                auto_state.crosstrack &&
-                current_loc.get_distance(next_WP_loc) > radius*3) ||
-               (control_mode == &mode_rtl && quadplane.available() && quadplane.rtl_mode == 1)) {
-        /*
-          if never reached loiter point and using crosstrack and somewhat far away from loiter point
-          navigate to it like in auto-mode for normal crosstrack behavior
-          
-          we also use direct waypoint navigation if we are a quadplane
-          that is going to be switching to QRTL when it gets within
-          RTL_RADIUS
-        */
-        nav_controller->update_waypoint(prev_WP_loc, next_WP_loc);
-    } else {
-        nav_controller->update_loiter(next_WP_loc, radius, loiter.direction);
-    }
-
-    if (loiter.start_time_ms == 0) {
-        if (reached_loiter_target() ||
-            auto_state.wp_proportion > 1) {
-            // we've reached the target, start the timer
-            loiter.start_time_ms = millis();
-            if (control_mode == &mode_guided || control_mode == &mode_avoidADSB) {
-                // starting a loiter in GUIDED means we just reached the target point
-                gcs().send_mission_item_reached_message(0);
+    // add by Xinglong Ju 20210519
+    if(abs(aparm.loiter_radius)<=1){
+        if (radius <= 1) {
+            // if radius is <=1 then use the general loiter radius. if it's small, use default
+            radius = (abs(aparm.loiter_radius) <= 1) ? LOITER_RADIUS_DEFAULT : abs(aparm.loiter_radius);
+            if (next_WP_loc.loiter_ccw == 1) {
+                loiter.direction = -1;
+            } else {
+                loiter.direction = (aparm.loiter_radius < 0) ? -1 : 1;
             }
-            if (quadplane.guided_mode_enabled()) {
+        }
+
+        if (loiter.start_time_ms != 0 &&
+            quadplane.guided_mode_enabled()) {
+            if (!auto_state.vtol_loiter) {
+                auto_state.vtol_loiter = true;
+                // reset loiter start time, so we don't consider the point
+                // reached till we get much closer
+                loiter.start_time_ms = 0;
                 quadplane.guided_start();
             }
+        } else if ((loiter.start_time_ms == 0 &&
+                    (control_mode == &mode_auto || control_mode == &mode_guided) &&
+                    auto_state.crosstrack &&
+                    current_loc.get_distance(next_WP_loc) > radius*3) ||
+                (control_mode == &mode_rtl && quadplane.available() && quadplane.rtl_mode == 1)) {
+            /*
+            if never reached loiter point and using crosstrack and somewhat far away from loiter point
+            navigate to it like in auto-mode for normal crosstrack behavior
+            
+            we also use direct waypoint navigation if we are a quadplane
+            that is going to be switching to QRTL when it gets within
+            RTL_RADIUS
+            */
+            nav_controller->update_waypoint(prev_WP_loc, next_WP_loc);
+        } else {
+            nav_controller->update_loiter(next_WP_loc, radius, loiter.direction);
         }
+
+        if (loiter.start_time_ms == 0) {
+            if (reached_loiter_target() ||
+                auto_state.wp_proportion > 1) {
+                // we've reached the target, start the timer
+                loiter.start_time_ms = millis();
+                if (control_mode == &mode_guided || control_mode == &mode_avoidADSB) {
+                    // starting a loiter in GUIDED means we just reached the target point
+                    gcs().send_mission_item_reached_message(0);
+                }
+                if (quadplane.guided_mode_enabled()) {
+                    quadplane.guided_start();
+                }
+            }
+        }
+    }
+    // add by Xinglong Ju 20210519
+    else{
+        nav_controller->update_latAcc(next_WP_loc);
     }
 }
 
