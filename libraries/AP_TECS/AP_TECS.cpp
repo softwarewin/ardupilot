@@ -1135,8 +1135,9 @@ void AP_TECS::update_pitch_throttle(int32_t hgt_dem_cm,
         _flags.badDescent = false;        
     }
 
-    if(hgt_dem_cm<-5000){
-        _update_pitch_direct(radians((float)(hgt_dem_cm + 10000)));
+    // add by Xinglong Ju 20210609
+    if(hgt_dem_cm> 5000){
+        _update_pitch_direct(radians((float)(hgt_dem_cm - 10000)));
     }
     else{
         // Calculate pitch demand
