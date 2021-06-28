@@ -305,8 +305,8 @@ bool Location::sanitize(const Location &defaultLoc)
 }
 
 // make sure we know what size the Location object is:
-// modified by Xinglong Ju 20210509 16 origin
-assert_storage_size<Location, 24> _assert_storage_size_Location;
+// modified by Xinglong Ju 20210628 16 origin
+assert_storage_size<Location, 28> _assert_storage_size_Location;
 
 
 // return bearing in centi-degrees from location to loc2

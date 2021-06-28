@@ -25,6 +25,8 @@ public:
     // auxiliary guide command information 
     float LateralAcc_cmd;
     float Pitch_cmd;
+    // add by Xinglong Ju 20210628
+    uint8_t control_mode; // 0: waypoint guide 1: direct lateral control 2: direct lateral control + direct pitch control
 
     /// enumeration of possible altitude types
     enum class AltFrame {

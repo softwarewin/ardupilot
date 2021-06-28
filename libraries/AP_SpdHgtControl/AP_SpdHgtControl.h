@@ -21,7 +21,7 @@ public:
 	// Should be called at 50Hz or faster
 	virtual void update_50hz(void) = 0;
 
-
+	// modified by Xinglong Ju 20210628
 	// Update of the pitch and throttle demands
 	// Should be called at 10Hz or faster
 	virtual void update_pitch_throttle( int32_t hgt_dem_cm,
@@ -32,7 +32,9 @@ public:
 										int16_t throttle_nudge,
                                         float hgt_afe,
 										float load_factor,
-                                        bool soaring_active) = 0;
+                                        bool soaring_active,
+										float direct_pitch,
+										uint8_t update_mode) = 0;
 
 	// demanded throttle in percentage
 	// should return 0 to 100

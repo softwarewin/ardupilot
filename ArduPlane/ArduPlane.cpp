@@ -593,11 +593,7 @@ void Plane::update_alt()
             target_alt = MAX(target_alt, prev_WP_loc.alt + (g2.rtl_climb_min+10)*100);
         }
 
-        // add by Xinglong Ju 20210609
-        // if target alt is very low, control pitch angle directly
-        // the pitch angle is -10000 + pitchangle
-        if(next_WP_loc.alt>5000*100)
-            target_alt = next_WP_loc.Pitch_cmd + 10000.0*100;
+        // add by Xinglong Ju 20210628
         SpdHgt_Controller->update_pitch_throttle(target_alt,
                                                  target_airspeed_cm,
                                                  flight_stage,
@@ -606,7 +602,9 @@ void Plane::update_alt()
                                                  throttle_nudge,
                                                  tecs_hgt_afe(),
                                                  aerodynamic_load_factor,
-                                                 soaring_active);
+                                                 soaring_active,
+                                                 next_WP_loc.Pitch_cmd,
+                                                 next_WP_loc.control_mode);
     }
 }
 

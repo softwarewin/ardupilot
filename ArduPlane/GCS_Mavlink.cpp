@@ -663,6 +663,61 @@ bool GCS_MAVLINK_Plane::handle_guided_request(AP_Mission::Mission_Command &cmd)
     return true;
 }
 
+//add by Xinglong Ju 20210628
+/*
+  handle a request to control plane movment 
+  following functions included:
+  1 move way point control 
+  2 airspeed control
+  3 attitude control
+ */
+bool GCS_MAVLINK_Plane::handle_move_control_request(const mavlink_move_control_t &move_control)
+{
+    if (plane.control_mode != &plane.mode_guided) {
+        // only accept position updates when in GUIDED mode
+        return false;
+    }
+
+    // move way point control
+    struct AP_Mission::Mission_Command cmd = {};
+    cmd.p1 = fabsf(move_control.Radius);                  // store radius as 16bit since no other params are competing for space
+    cmd.content.location.control_mode = move_control.Mode;
+    cmd.content.location.loiter_ccw = (move_control.Radius < 0);    // -1 = counter clockwise, +1 = clockwise
+    // auxiliary guide command information 
+    cmd.content.location.LateralAcc_cmd = move_control.latAcc_cmd;
+    cmd.content.location.Pitch_cmd = move_control.PitchCmd;
+    cmd.content.location.lat = move_control.Lat;
+    cmd.content.location.lng = move_control.Lon;
+
+    cmd.content.location.alt = move_control.Rel_height * 100.0f;       // convert packet's alt (m) to cmd alt (cm)
+    cmd.content.location.relative_alt = 1;
+
+    plane.guided_WP_loc = cmd.content.location;
+    
+    // add home alt if needed
+    if (plane.guided_WP_loc.relative_alt) {
+        plane.guided_WP_loc.alt += plane.home.alt;
+        plane.guided_WP_loc.relative_alt = 0;
+    }
+    plane.set_guided_WP();
+    // airspeed control
+    // if we're in failsafe modes (e.g., RTL, LOITER) or in pilot
+    // controlled modes (e.g., MANUAL, TRAINING)
+    // this command should be ignored since it comes in from GCS
+    // or a companion computer:
+    if ((plane.control_mode != &plane.mode_guided) &&
+        (plane.control_mode != &plane.mode_auto) &&
+        (plane.control_mode != &plane.mode_avoidADSB)) {
+        // failed
+        return false;
+    }
+    cmd.content.speed.speed_type = 0; // Airspeed
+    cmd.content.speed.target_ms = move_control.airspeed;
+    plane.do_change_speed(cmd);
+    // attitude control 
+    // periodically run based on control mode 
+    return true;
+}
 /*
   handle a request to change current WP altitude. This happens via a
   callback from handle_mission_item()
@@ -1332,6 +1387,12 @@ void GCS_MAVLINK_Plane::handleMessage(const mavlink_message_t &msg)
         plane.adsb.handle_message(chan, msg);
         break;
 
+    // add by Xinglong Ju 20210626
+    case MAVLINK_MSG_ID_MOVE_CONTROL:
+        mavlink_move_control_t move_control;
+        mavlink_msg_move_control_decode(&msg, &move_control);
+        handle_move_control_request(move_control);
+        break;
     default:
         handle_common_message(msg);
         break;

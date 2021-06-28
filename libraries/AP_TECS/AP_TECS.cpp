@@ -961,7 +961,7 @@ void AP_TECS::_update_STE_rate_lim(void)
     _STEdot_min = - _minSinkRate * GRAVITY_MSS;
 }
 
-
+// modified by Xinglong Ju 20210628
 void AP_TECS::update_pitch_throttle(int32_t hgt_dem_cm,
                                     int32_t EAS_dem_cm,
                                     enum AP_Vehicle::FixedWing::FlightStage flight_stage,
@@ -970,7 +970,9 @@ void AP_TECS::update_pitch_throttle(int32_t hgt_dem_cm,
                                     int16_t throttle_nudge,
                                     float hgt_afe,
                                     float load_factor,
-                                    bool soaring_active)
+                                    bool soaring_active,
+                                    float direct_pitch,
+									uint8_t update_mode)
 {
     // Calculate time in seconds since last update
     uint64_t now = AP_HAL::micros64();
@@ -1135,9 +1137,9 @@ void AP_TECS::update_pitch_throttle(int32_t hgt_dem_cm,
         _flags.badDescent = false;        
     }
 
-    // add by Xinglong Ju 20210609
-    if(hgt_dem_cm> 5000*100){
-        _update_pitch_direct(radians((float)(hgt_dem_cm - 10000*100)));
+    // add by Xinglong Ju 20210628
+    if(update_mode==3){
+        _update_pitch_direct(radians(direct_pitch));
     }
     else{
         // Calculate pitch demand

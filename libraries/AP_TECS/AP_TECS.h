@@ -45,6 +45,7 @@ public:
     void update_50hz(void) override;
 
     // Update the control loop calculations
+    // modified by Xinglong Ju 20210628
     void update_pitch_throttle(int32_t hgt_dem_cm,
                                int32_t EAS_dem_cm,
                                enum AP_Vehicle::FixedWing::FlightStage flight_stage,
@@ -53,7 +54,9 @@ public:
                                int16_t throttle_nudge,
                                float hgt_afe,
                                float load_factor,
-                               bool soaring_active) override;
+                               bool soaring_active,
+                               float direct_pitch,
+							   uint8_t update_mode) override;
 
     // demanded throttle in percentage
     // should return -100 to 100, usually positive unless reverse thrust is enabled via _THRminf < 0

@@ -749,10 +749,6 @@ MAV_MISSION_RESULT AP_Mission::mavlink_int_to_mission_cmd(const mavlink_mission_
     case MAV_CMD_NAV_LOITER_UNLIM:                      // MAV ID: 17
         cmd.p1 = fabsf(packet.param3);                  // store radius as 16bit since no other params are competing for space
         cmd.content.location.loiter_ccw = (packet.param3 < 0);    // -1 = counter clockwise, +1 = clockwise
-        // add by Xinglong Ju 20210509
-        // auxiliary guide command information 
-        cmd.content.location.LateralAcc_cmd = packet.param1;
-        cmd.content.location.Pitch_cmd = packet.param2;
         break;
 
     case MAV_CMD_NAV_LOITER_TURNS:                      // MAV ID: 18
