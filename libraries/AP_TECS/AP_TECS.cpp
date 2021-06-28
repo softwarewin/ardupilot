@@ -1138,7 +1138,7 @@ void AP_TECS::update_pitch_throttle(int32_t hgt_dem_cm,
     }
 
     // add by Xinglong Ju 20210628
-    if(update_mode==3){
+    if(update_mode==2){
         _update_pitch_direct(radians(direct_pitch));
     }
     else{

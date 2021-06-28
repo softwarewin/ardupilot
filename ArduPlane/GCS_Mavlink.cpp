@@ -711,6 +711,7 @@ bool GCS_MAVLINK_Plane::handle_move_control_request(const mavlink_move_control_t
     // or a companion computer:
     cmd.content.speed.speed_type = 0; // Airspeed
     cmd.content.speed.target_ms = move_control.airspeed;
+    cmd.content.speed.throttle_pct = 0;
     plane.do_change_speed(cmd);
     // attitude control 
     // periodically run based on control mode 
