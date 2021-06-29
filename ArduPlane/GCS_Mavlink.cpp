@@ -689,8 +689,8 @@ bool GCS_MAVLINK_Plane::handle_move_control_request(const mavlink_move_control_t
         // auxiliary guide command information 
         cmd.content.location.LateralAcc_cmd = move_control.latAcc_cmd;
         cmd.content.location.Pitch_cmd = move_control.PitchCmd;
-        cmd.content.location.lat = move_control.Lat;
-        cmd.content.location.lng = move_control.Lon;
+        cmd.content.location.lat = move_control.Lat * 1.0e7f;
+        cmd.content.location.lng = move_control.Lon * 1.0e7f;
 
         cmd.content.location.alt = move_control.Rel_height * 100.0f;       // convert packet's alt (m) to cmd alt (cm)
         cmd.content.location.relative_alt = 1;
