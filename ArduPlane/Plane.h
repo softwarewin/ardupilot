@@ -831,6 +831,8 @@ private:
     void rangefinder_terrain_correction(float &height);
     void set_next_WP(const struct Location &loc);
     void set_guided_WP(void);
+    // add by Xinglong Ju 20210718
+    void set_guided_WP_No_PreWP(void);
     void update_home();
     // set home location and store it persistently:
     bool set_home_persistently(const Location &loc) WARN_IF_UNUSED;

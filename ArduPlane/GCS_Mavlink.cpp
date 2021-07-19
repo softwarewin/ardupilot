@@ -702,7 +702,23 @@ bool GCS_MAVLINK_Plane::handle_move_control_request(const mavlink_move_control_t
             plane.guided_WP_loc.alt += plane.home.alt;
             plane.guided_WP_loc.relative_alt = 0;
         }
-        plane.set_guided_WP();
+
+        // add by Xinglong Ju 20210718
+        // force set previou wp loc so the plane can move following required path
+        plane.prev_WP_loc = plane.guided_WP_loc;
+
+        plane.prev_WP_loc.lat = move_control.LatPre * 1.0e7f;
+        plane.prev_WP_loc.lng = move_control.LonPre * 1.0e7f;
+        plane.prev_WP_loc.alt = move_control.Rel_heightPre * 100.0f; 
+
+        if (plane.prev_WP_loc.relative_alt) {
+            plane.prev_WP_loc.alt += plane.home.alt;
+            plane.prev_WP_loc.relative_alt = 0;
+        }
+
+        // add by Xinglong Ju 20210718
+        // new way to set wp, appoint prev_wp_loc
+        plane.set_guided_WP_No_PreWP();
     }
     // airspeed control
     // if we're in failsafe modes (e.g., RTL, LOITER) or in pilot

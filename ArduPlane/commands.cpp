@@ -100,7 +100,37 @@ void Plane::set_guided_WP(void)
     
     loiter_angle_reset();
 }
+// add by Xinglong Ju 20210718
+void Plane::set_guided_WP_No_PreWP(void)
+{
+    if (aparm.loiter_radius < 0 || guided_WP_loc.loiter_ccw) {
+        loiter.direction = -1;
+    } else {
+        loiter.direction = 1;
+    }
 
+    // Load the next_WP slot
+    // ---------------------
+    next_WP_loc = guided_WP_loc;
+
+    // used to control FBW and limit the rate of climb
+    // -----------------------------------------------
+    set_target_altitude_current();
+
+    setup_glide_slope();
+    setup_turn_angle();
+
+    // disable crosstrack, head directly to the point
+    auto_state.crosstrack = false;
+
+    // reset loiter start time.
+    loiter.start_time_ms = 0;
+
+    // start in non-VTOL mode
+    auto_state.vtol_loiter = false;
+    
+    loiter_angle_reset();
+}
 /*
   update home location from GPS
   this is called as long as we have 3D lock and the arming switch is
